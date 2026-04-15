@@ -1,38 +1,90 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // Eingaben säubern
     $name = htmlspecialchars(trim($_POST["name"]));
     $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
     $message = htmlspecialchars(trim($_POST["message"]));
 
-    // Validierung
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        die("Ungültige E-Mail-Adresse.");
-    }
-
-    if (empty($name) || empty($message)) {
-        die("Bitte alle Felder ausfüllen.");
-    }
-
-    // Empfänger
-    $to = "kontakt@natalyapastukhova.de";
-    $subject = "Neue Kontaktanfrage von $name";
-
-    // Nachricht
-    $body = "Name: $name\n";
-    $body .= "E-Mail: $email\n\n";
-    $body .= "Nachricht:\n$message";
-
-    // Header
-    $headers = "From: $email\r\n";
-    $headers .= "Reply-To: $email\r\n";
-
-    // Senden
-    if (mail($to, $subject, $body, $headers)) {
-        echo "Vielen Dank! Ihre Nachricht wurde gesendet.";
+        $status = "error";
+        $msg = "Ungültige E-Mail-Adresse.";
+    } elseif (empty($name) || empty($message)) {
+        $status = "error";
+        $msg = "Bitte alle Felder ausfüllen.";
     } else {
-        echo "Fehler beim Senden. Bitte später erneut versuchen.";
+        $to = "kontakt@natalyapastukhova.de";
+        $subject = "Neue Kontaktanfrage von $name";
+
+        $body = "Name: $name\n";
+        $body .= "E-Mail: $email\n\n";
+        $body .= "Nachricht:\n$message";
+
+        $headers = "From: $email\r\n";
+        $headers .= "Reply-To: $email\r\n";
+
+        if (mail($to, $subject, $body, $headers)) {
+            $status = "success";
+            $msg = "Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.";
+        } else {
+            $status = "error";
+            $msg = "Fehler beim Senden. Bitte später erneut versuchen.";
+        }
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Kontakt</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+a.button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: black;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h2 class="<?php echo $status; ?>">
+        <?php echo $msg; ?>
+    </h2>
+
+    <a href="/" class="button">Zurück zur Startseite</a>
+</div>
+
+</body>
+</html>
