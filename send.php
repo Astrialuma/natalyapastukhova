@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $status = "error";
         $msg = "Bitte alle Felder ausfüllen.";
     } else {
-        $to = "kontakt@natalyapastukhova.de";
+        $to = "maximilianfl@outlook.de";
         $subject = "Neue Kontaktanfrage von $name";
 
         $body = "Name: $name\n";
@@ -69,7 +69,7 @@ a.button {
     display: inline-block;
     margin-top: 20px;
     padding: 12px 20px;
-    background: black;
+    background: #b48a78;
     color: white;
     text-decoration: none;
     border-radius: 6px;
