@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $status = "error";
         $msg = "Bitte alle Felder ausfüllen.";
     } else {
-        $to = "maximilianfl@outlook.de";
+        $to = "kontakt@natalyapastukhova.de";
         $subject = "Neue Kontaktanfrage von $name";
 
         $body = "Name: $name\n";
