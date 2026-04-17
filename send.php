@@ -1,9 +1,4 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'vendor/autoload.php';
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $name = htmlspecialchars(trim($_POST["name"]));
@@ -17,38 +12,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $status = "error";
         $msg = "Bitte alle Felder ausfüllen.";
     } else {
+        $to = "maximilianfl@outlook.de";
+        $subject = "Neue Kontaktanfrage von $name";
 
-        $mail = new PHPMailer(true);
+        $body = "Name: $name\n";
+        $body .= "E-Mail: $email\n\n";
+        $body .= "Nachricht:\n$message";
 
-        try {
-            // SMTP Einstellungen (Hostinger)
-            $mail->isSMTP();
-            $mail->Host = 'smtp.hostinger.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'kontakt@natalyapastukhova.de'; // DEINE DOMAIN MAIL
-            $mail->Password = 'DEIN_PASSWORT'; // HIER PASSWORT EINTRAGEN
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+        $headers = "From: $email\r\n";
+        $headers .= "Reply-To: $email\r\n";
 
-            // Absender & Empfänger
-            $mail->setFrom('kontakt@natalyapastukhova.de', 'Website Kontakt');
-            $mail->addAddress('maximilianfl@outlook.de');
-
-            // Wichtig!
-            $mail->addReplyTo($email, $name);
-
-            // Inhalt
-            $mail->Subject = "Neue Kontaktanfrage von $name";
-            $mail->Body = "Name: $name\nE-Mail: $email\n\nNachricht:\n$message";
-
-            $mail->send();
-
+        if (mail($to, $subject, $body, $headers)) {
             $status = "success";
             $msg = "Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.";
-
-        } catch (Exception $e) {
+        } else {
             $status = "error";
-            $msg = "Fehler beim Senden: {$mail->ErrorInfo}";
+            $msg = "Fehler beim Senden. Bitte später erneut versuchen.";
         }
     }
 }
