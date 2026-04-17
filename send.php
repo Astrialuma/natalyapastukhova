@@ -25,12 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             // SMTP Einstellungen
             $mail->isSMTP();
-            $mail->Host       = 'smtp.hostinger.com';
+            $mail->Host       = 'smtp.titan.email';
             $mail->SMTPAuth   = true;
             $mail->Username   = 'kontakt@natalyapastukhova.de'; // DEINE MAIL
             $mail->Password   = '8838Weber!'; // ⚠️ HIER PASSWORT EINTRAGEN
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
 
             // Absender
             $mail->setFrom('kontakt@natalyapastukhova.de', 'Website Kontakt');
