@@ -1,4 +1,11 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $name = htmlspecialchars(trim($_POST["name"]));
@@ -12,22 +19,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $status = "error";
         $msg = "Bitte alle Felder ausfüllen.";
     } else {
-        $to = "kontakt@natalyapastukhova.de";
-        $subject = "Neue Kontaktanfrage von $name";
 
-        $body = "Name: $name\n";
-        $body .= "E-Mail: $email\n\n";
-        $body .= "Nachricht:\n$message";
+        $mail = new PHPMailer(true);
 
-        $headers = "From: kontakt@natalyapastukhova.de\r\n";
-        $headers .= "Reply-To: $email\r\n";
+        try {
+            // SMTP Einstellungen
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.hostinger.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'kontakt@natalyapastukhova.de'; // DEINE MAIL
+            $mail->Password   = 'DEIN_PASSWORT'; // ⚠️ HIER PASSWORT EINTRAGEN
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
 
-        if (mail($to, $subject, $body, $headers)) {
+            // Absender
+            $mail->setFrom('kontakt@natalyapastukhova.de', 'Website Kontakt');
+            $mail->addReplyTo($email, $name);
+
+            // Empfänger
+            $mail->addAddress('kontakt@natalyapastukhova.de');
+
+            // Inhalt
+            $mail->isHTML(false);
+            $mail->Subject = "Neue Kontaktanfrage von $name";
+
+            $body  = "Name: $name\n";
+            $body .= "E-Mail: $email\n\n";
+            $body .= "Nachricht:\n$message";
+
+            $mail->Body = $body;
+
+            $mail->send();
+
             $status = "success";
             $msg = "Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.";
-        } else {
+
+        } catch (Exception $e) {
             $status = "error";
-            $msg = "Fehler beim Senden. Bitte später erneut versuchen.";
+            $msg = "Fehler beim Senden: " . $mail->ErrorInfo;
         }
     }
 }
@@ -57,13 +86,8 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-.success {
-    color: green;
-}
-
-.error {
-    color: red;
-}
+.success { color: green; }
+.error { color: red; }
 
 a.button {
     display: inline-block;
@@ -79,8 +103,8 @@ a.button {
 <body>
 
 <div class="box">
-    <h2 class="<?php echo $status; ?>">
-        <?php echo $msg; ?>
+    <h2 class="<?php echo $status ?? ''; ?>">
+        <?php echo $msg ?? ''; ?>
     </h2>
 
     <a href="/" class="button">Zurück zur Startseite</a>
