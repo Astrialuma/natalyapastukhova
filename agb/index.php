@@ -12,8 +12,8 @@
     <div class="logo">Natalya Pastukhova</div>
     <nav>
         <a href="/">Home</a>
-        <a href="/">Service</a>
-        <a href="/">Preisliste</a>
+        <a href="/#service">Service</a>
+        <a href="/#preise">Preisliste</a>
         <a href="#agb">Impressum, Agb & Datenschutz</a>
     </nav>
 </header>

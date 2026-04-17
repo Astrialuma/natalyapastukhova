@@ -35,7 +35,7 @@
         <p>
             Ich begleite Männer, die ihre Orientierung stärken und in Beziehungen klarer, ruhiger und bewusster handeln möchten – ohne sich selbst zu verlieren.
         </p>
-        <a class="btn" href="mailto:kontakt@natalyapastukhova.de">Beratung anfragen</a>
+        <a class="btn" href="#contact">Beratung anfragen</a>
     </div>
 </section>
 <section class="section container">
@@ -108,15 +108,17 @@
 
 
 <section class="section container center">
-  <h2>
+  <h3>
     Reife Beziehung beginnt dort,<br>
     wo zwei Menschen freiwillig bleiben.
-  </h2>
+  </h3>
+
+  <h2>Kontaktformular</h2>
 
   <p>Kontaktieren Sie mich unter <a href="mailto:kontakt@natalyapastukhova.de">kontakt@natalyapastukhova.de</a> oder füllen Sie das folgende Formular aus</p><br>
 
 
-    <form action="send.php" method="post" class="kontakt-form">
+    <form action="send.php" method="post" id="contact" class="kontakt-form">
         <input type="text" name="name" placeholder="Ihr Name" required>
         
         <input type="email" name="email" placeholder="Ihre E-Mail" required>
