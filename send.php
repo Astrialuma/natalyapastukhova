@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Host       = 'smtp.hostinger.com';
             $mail->SMTPAuth   = true;
             $mail->Username   = 'kontakt@natalyapastukhova.de'; // DEINE MAIL
-            $mail->Password   = 'DEIN_PASSWORT'; // ⚠️ HIER PASSWORT EINTRAGEN
+            $mail->Password   = '8838Weber!'; // ⚠️ HIER PASSWORT EINTRAGEN
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
