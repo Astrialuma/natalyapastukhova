@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $body .= "E-Mail: $email\n\n";
         $body .= "Nachricht:\n$message";
 
-        $headers = "From: $email\r\n";
+        $headers = "From: kontakt@natalyapastukhova.de\r\n";
         $headers .= "Reply-To: $email\r\n";
 
         if (mail($to, $subject, $body, $headers)) {
