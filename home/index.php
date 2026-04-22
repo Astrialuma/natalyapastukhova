@@ -104,14 +104,16 @@
     Es geht nicht darum, jemanden zu überzeugen oder zu verändern.
     Es geht darum, bei sich selbst klar zu werden.
   </p>
-</section>
 
-
-<section class="section container center">
-  <h3>
+    <h3>
     Reife Beziehung beginnt dort,<br>
     wo zwei Menschen freiwillig bleiben.
   </h3>
+</section>
+
+
+<section class="section container center contactsec">
+
 
   <h2>Kontaktformular</h2>
 
@@ -156,14 +158,17 @@
     <div class="price-table">
         <div class="price-card">
             <h3>Honorar</h3>
-            <p class="price">180€ / 60 Min</p>
+            <p>Einzelberatung (60 Minuten)</p>
+            <p class="price">180€s</p>
         </div>
         <div class="price-card">
             <h3>5 Sitzungen</h3>
+            <p>Für Männer, die tiefer arbeiten möchten und Entwicklung über mehrere Wochen wünschen.</p>
             <p class="price">790€</p>
         </div>
         <div class="price-card">
             <h3>8 Sitzungen</h3>
+            <p>Für nachhaltige Stabilisierung und klare Neuausrichtung.</p>
             <p class="price">1190€</p>
         </div>
     </div>
