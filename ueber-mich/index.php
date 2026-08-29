@@ -7,7 +7,7 @@
 
     <title>Über mich | Natalya Pastukhova</title>
 
-    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/index.css?v=1">
 </head>
 
 

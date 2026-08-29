@@ -8,7 +8,7 @@
 
     <title>Natalya Pastukhova | Impressum, Datenschutz & AGB</title>
 
-    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/index.css?v=1">
 </head>
 
 <body>

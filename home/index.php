@@ -7,7 +7,7 @@
 
     <title>Natalya Pastukhova | Persönliche Begleitung bei Partnersuche und Beziehung</title>
 
-    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/index.css?v=1">
 </head>
 
 <body>
