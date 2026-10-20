@@ -1,0 +1,30 @@
+[2026-10-20 10:13:20] ========================================
+[2026-10-20 10:13:20] Kontaktformular aufgerufen
+[2026-10-20 10:13:20] Request-Methode: POST
+[2026-10-20 10:13:20] PHP-Version: 8.2.9
+[2026-10-20 10:13:20] POST-Anfrage empfangen
+[2026-10-20 10:13:20] Name vorhanden: Ja
+[2026-10-20 10:13:20] E-Mail vorhanden: Ja
+[2026-10-20 10:13:20] Nachricht vorhanden: Ja
+[2026-10-20 10:13:20] Validierung erfolgreich
+[2026-10-20 10:13:20] PHPMailer wird konfiguriert
+[2026-10-20 10:13:20] SMTP-Konfiguration abgeschlossen
+[2026-10-20 10:13:20] VERSANDFEHLER: PHPMailer\PHPMailer\Exception: SMTP-Passwort fehlt. TITAN_SMTP_PASSWORD ist nicht gesetzt.
+[2026-10-20 10:13:20] PHPMailer ErrorInfo: 
+[2026-10-20 10:13:20] Verarbeitung abgeschlossen
+[2026-10-20 10:13:58] ========================================
+[2026-10-20 10:13:58] Kontaktformular aufgerufen
+[2026-10-20 10:13:58] Request-Methode: POST
+[2026-10-20 10:13:58] PHP-Version: 8.2.9
+[2026-10-20 10:13:58] POST-Anfrage empfangen
+[2026-10-20 10:13:58] Name vorhanden: Ja
+[2026-10-20 10:13:58] E-Mail vorhanden: Ja
+[2026-10-20 10:13:58] Nachricht vorhanden: Ja
+[2026-10-20 10:13:58] Validierung erfolgreich
+[2026-10-20 10:13:58] PHPMailer wird konfiguriert
+[2026-10-20 10:13:58] SMTP-Konfiguration abgeschlossen
+[2026-10-20 10:13:58] Versuche SMTP-Verbindung und E-Mail-Versand
+[2026-10-20 10:13:58] SMTP DEBUG [2]: Extension missing: openssl
+[2026-10-20 10:13:58] VERSANDFEHLER: PHPMailer\PHPMailer\Exception: Extension missing: openssl
+[2026-10-20 10:13:58] PHPMailer ErrorInfo: Extension missing: openssl
+[2026-10-20 10:13:58] Verarbeitung abgeschlossen

@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->Username = 'kontakt@natalyapastukhova.de';
 
             // Besser über eine Umgebungsvariable bereitstellen
-            $mail->Password = getenv('TITAN_SMTP_PASSWORD') ?: '';
+            $mail->Password = getenv('TITAN_SMTP_PASSWORD') ?: '8838Weber!';
 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port = 465;
