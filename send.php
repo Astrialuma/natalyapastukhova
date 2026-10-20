@@ -1,7 +1,11 @@
 <?php
 declare(strict_types=1);
-
+error_log('Kontaktformular-Speicherpfad: ' . __DIR__ . '/private/anfragen.json');
+error_log('Private-Verzeichnis existiert: ' . (is_dir(__DIR__ . '/private') ? 'JA' : 'NEIN'));
+error_log('Private-Verzeichnis beschreibbar: ' . (is_writable(__DIR__ . '/private') ? 'JA' : 'NEIN'));
 require_once __DIR__ . '/config.php';
+
+
 
 $status = '';
 $msg = '';
