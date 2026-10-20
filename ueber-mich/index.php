@@ -531,8 +531,8 @@
 
         <p class="email-contact">
             Oder schreiben Sie mir:
-            <a href="mailto:kontakt@natalyapastukhova.de">
-                kontakt@natalyapastukhova.de
+            <a href="mailto:natalyap@gmx.de">
+                natalyap@gmx.de
             </a>
         </p>
 

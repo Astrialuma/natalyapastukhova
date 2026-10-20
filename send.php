@@ -1,249 +1,75 @@
-
 <?php
+declare(strict_types=1);
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-// ==================================================
-// DEBUGGING: HIER EIN- UND AUSSCHALTEN
-// ==================================================
-
-$DEBUG = true; // true = Debugging an, false = Debugging aus
-
-// ==================================================
-// KONFIGURATION
-// ==================================================
-
-error_reporting(E_ALL);
-ini_set('display_errors', $DEBUG ? '1' : '0');
-ini_set('log_errors', '1');
-
-// Debug-Ausgaben in eine Datei schreiben
-$debugLog = __DIR__ . '/contact-debug.log';
-
-function debugLog($text)
-{
-    global $DEBUG, $debugLog;
-
-    if (!$DEBUG) {
-        return;
-    }
-
-    $line = '[' . date('Y-m-d H:i:s') . '] ' . $text . PHP_EOL;
-
-    // In PHP-Fehlerlog schreiben
-    error_log(trim($line));
-
-    // Zusätzlich in eigene Datei schreiben
-    $result = @file_put_contents(
-        $debugLog,
-        $line,
-        FILE_APPEND | LOCK_EX
-    );
-
-    if ($result === false) {
-        error_log('DEBUG: Konnte Debug-Datei nicht beschreiben.');
-    }
-}
-
-// PHP-Warnungen und Fehler protokollieren
-set_error_handler(function ($severity, $message, $file, $line) {
-    debugLog("PHP-Fehler [$severity]: $message in $file:$line");
-
-    // Normale PHP-Behandlung beibehalten
-    return false;
-});
-
-// Unbehandelte Ausnahmen protokollieren
-set_exception_handler(function ($exception) {
-    debugLog(
-        'UNBEHANDELTE AUSNAHME: ' .
-        get_class($exception) . ': ' .
-        $exception->getMessage() .
-        ' in ' . $exception->getFile() .
-        ':' . $exception->getLine()
-    );
-
-    http_response_code(500);
-
-    echo 'Ein unerwarteter Fehler ist aufgetreten.';
-
-    if ($GLOBALS['DEBUG']) {
-        echo '<pre>' .
-            htmlspecialchars(
-                $exception->getMessage(),
-                ENT_QUOTES,
-                'UTF-8'
-            ) .
-            '</pre>';
-    }
-});
-
-// ==================================================
-// PHPMailer LADEN
-// ==================================================
-
-require __DIR__ . '/PHPMailer/src/Exception.php';
-require __DIR__ . '/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/PHPMailer/src/SMTP.php';
-
-debugLog('========================================');
-debugLog('Kontaktformular aufgerufen');
-debugLog('Request-Methode: ' . ($_SERVER['REQUEST_METHOD'] ?? 'unbekannt'));
-debugLog('PHP-Version: ' . PHP_VERSION);
-
-// ==================================================
-// STATUS-VARIABLEN
-// ==================================================
+require_once __DIR__ . '/config.php';
 
 $status = '';
 $msg = '';
+$name = '';
+$email = '';
+$message = '';
+$redirectAfterSuccess = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim((string) ($_POST['name'] ?? ''));
+    $email = trim((string) ($_POST['email'] ?? ''));
+    $message = trim((string) ($_POST['message'] ?? ''));
 
-    debugLog('POST-Anfrage empfangen');
+    // Spam-Falle
+    $honeypot = trim((string) ($_POST['website'] ?? ''));
 
-    // Eingaben sicher einlesen
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $message = trim($_POST['message'] ?? '');
+    if ($honeypot !== '') {
+        $status = 'success';
+        $msg = 'Vielen Dank! Ihre Anfrage wurde abgeschickt.';
+        $redirectAfterSuccess = true;
 
-    debugLog('Name vorhanden: ' . ($name !== '' ? 'Ja' : 'Nein'));
-    debugLog('E-Mail vorhanden: ' . ($email !== '' ? 'Ja' : 'Nein'));
-    debugLog('Nachricht vorhanden: ' . ($message !== '' ? 'Ja' : 'Nein'));
-
-    // ==================================================
-    // EINGABEN VALIDIEREN
-    // ==================================================
-
-    if ($name === '' || $email === '' || $message === '') {
-
-        debugLog('VALIDIERUNG FEHLGESCHLAGEN: Feld leer');
-
+    } elseif ($name === '' || $email === '' || $message === '') {
         $status = 'error';
-        $msg = 'Bitte alle Felder ausfüllen.';
+        $msg = 'Bitte füllen Sie alle Felder aus.';
+
+    } elseif (
+        strlen($name) > 120 ||
+        strlen($email) > 254 ||
+        strlen($message) > 10000
+    ) {
+        $status = 'error';
+        $msg = 'Ihre Eingabe ist zu lang.';
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
-        debugLog('VALIDIERUNG FEHLGESCHLAGEN: Ungültige E-Mail-Adresse');
-
         $status = 'error';
-        $msg = 'Ungültige E-Mail-Adresse.';
+        $msg = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
 
     } else {
-
-        debugLog('Validierung erfolgreich');
-
-        // ==================================================
-        // PHPMailer INITIALISIEREN
-        // ==================================================
-
-        $mail = new PHPMailer(true);
+        $contact = [
+            'id' => bin2hex(random_bytes(8)),
+            'name' => $name,
+            'email' => $email,
+            'message' => $message,
+            'created_at' => date(DATE_ATOM),
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+        ];
 
         try {
+            if (saveContact($contact)) {
+                $status = 'success';
+                $msg = 'Vielen Dank! Ihre Anfrage wurde erfolgreich abgeschickt.';
+                $redirectAfterSuccess = true;
 
-            debugLog('PHPMailer wird konfiguriert');
-
-            // SMTP-Debug-Ausgaben ebenfalls protokollieren
-            if ($DEBUG) {
-                $mail->SMTPDebug = 2;
-
-                $mail->Debugoutput = function ($str, $level) {
-                    debugLog("SMTP DEBUG [$level]: " . trim($str));
-                };
+                $name = '';
+                $email = '';
+                $message = '';
             } else {
-                $mail->SMTPDebug = 0;
+                $status = 'error';
+                $msg = 'Speichern fehlgeschlagen. Bitte versuchen Sie es später erneut.';
             }
-
-            // SMTP-Einstellungen
-            $mail->isSMTP();
-
-            $mail->Host = 'smtp.titan.email';
-            $mail->SMTPAuth = true;
-
-            $mail->Username = 'kontakt@natalyapastukhova.de';
-
-            // Besser über eine Umgebungsvariable bereitstellen
-            $mail->Password = getenv('TITAN_SMTP_PASSWORD') ?: '8838Weber!';
-
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port = 465;
-
-            $mail->Timeout = 20;
-            $mail->CharSet = 'UTF-8';
-
-            // Absender
-            $mail->setFrom(
-                'kontakt@natalyapastukhova.de',
-                'Website Kontakt'
-            );
-
-            $mail->addReplyTo($email, $name);
-
-            // Empfänger
-            $mail->addAddress('kontakt@natalyapastukhova.de');
-
-            // Inhalt
-            $mail->isHTML(false);
-            $mail->Subject = "Neue Kontaktanfrage von $name";
-
-            $body  = "Name: $name\n";
-            $body .= "E-Mail: $email\n\n";
-            $body .= "Nachricht:\n$message";
-
-            $mail->Body = $body;
-
-            debugLog('SMTP-Konfiguration abgeschlossen');
-
-            if ($mail->Password === '') {
-                throw new Exception(
-                    'SMTP-Passwort fehlt. TITAN_SMTP_PASSWORD ist nicht gesetzt.'
-                );
-            }
-
-            debugLog('Versuche SMTP-Verbindung und E-Mail-Versand');
-
-            // ==================================================
-            // E-MAIL SENDEN
-            // ==================================================
-
-            $mail->send();
-
-            debugLog('ERFOLG: PHPMailer send() war erfolgreich');
-
-            $status = 'success';
-            $msg = 'Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.';
-
-        } catch (\Throwable $e) {
-
-            debugLog(
-                'VERSANDFEHLER: ' .
-                get_class($e) . ': ' .
-                $e->getMessage()
-            );
-
-            if (isset($mail)) {
-                debugLog('PHPMailer ErrorInfo: ' . $mail->ErrorInfo);
-            }
+        } catch (Throwable $exception) {
+            error_log('Kontaktformular: ' . $exception->getMessage());
 
             $status = 'error';
-
-            // Im Debug-Modus mehr Informationen anzeigen
-            if ($DEBUG) {
-                $msg = 'Fehler beim Senden: ' .
-                    ($mail->ErrorInfo ?: $e->getMessage());
-            } else {
-                $msg = 'Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.';
-            }
+            $msg = 'Ein interner Fehler ist aufgetreten.';
         }
     }
-
-} else {
-    debugLog('Kein POST: Formularseite wurde normal aufgerufen');
 }
-
-debugLog('Verarbeitung abgeschlossen');
-
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -253,61 +79,291 @@ debugLog('Verarbeitung abgeschlossen');
 <title>Kontakt</title>
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
     margin: 0;
+    min-height: 100vh;
+    padding: 30px 16px;
+    display: grid;
+    place-items: center;
+    background: #f5f5f5;
+    color: #252525;
+    font-family: Arial, sans-serif;
 }
 
-.box {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
-    width: calc(100% - 80px);
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    overflow-wrap: anywhere;
+.card {
+    width: 100%;
+    max-width: 480px;
+    padding: 36px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .07);
 }
 
-.success {
-    color: green;
+h1 {
+    margin-top: 0;
+    font-size: 28px;
+}
+
+.subtitle {
+    color: #777;
+    line-height: 1.6;
+}
+
+label {
+    display: block;
+    margin: 18px 0 7px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    font: inherit;
+}
+
+input:focus,
+textarea:focus {
+    outline: 2px solid #b48a78;
+    border-color: transparent;
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+button,
+.redirect-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px;
+    border: 0;
+    border-radius: 9px;
+    background: #b48a78;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+button:hover,
+.redirect-button:hover {
+    background: #986e5d;
+}
+
+.notice {
+    margin-bottom: 20px;
+    padding: 13px;
+    border-radius: 8px;
+    line-height: 1.5;
 }
 
 .error {
-    color: red;
+    color: #a32121;
+    background: #fff0f0;
 }
 
-a.button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: #b48a78;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
+.honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Erfolgs-Popup */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .35);
+    animation: overlayIn .25s ease;
+}
+
+.success-popup {
+    width: 100%;
+    max-width: 390px;
+    padding: 32px 26px;
+    text-align: center;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .18);
+    animation: popupIn .3s ease;
+}
+
+.success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #eaf7ee;
+    color: #25834b;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.success-popup h2 {
+    margin: 0 0 12px;
+    font-size: 23px;
+}
+
+.success-popup p {
+    margin: 0;
+    color: #666;
+    line-height: 1.6;
+}
+
+.redirect-countdown {
+    margin-top: 14px !important;
+    font-size: 13px;
+    color: #888 !important;
+}
+
+@keyframes overlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popupIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 24px;
+    }
 }
 </style>
 </head>
 
 <body>
-<div class="box">
 
-    <?php if ($status !== ''): ?>
-        <h2 class="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>">
-            <?= htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') ?>
-        </h2>
-    <?php else: ?>
-        <h2>Kontakt</h2>
-        <p>Bitte füllen Sie das Kontaktformular aus.</p>
+<main class="card " style="display: none">
+    <h1>Kontakt</h1>
+
+    <p class="subtitle">
+        Sie haben eine Frage? Schreiben Sie uns.
+        Wir freuen uns auf Ihre Nachricht.
+    </p>
+
+    <?php if ($status === 'error'): ?>
+        <div class="notice error" role="alert">
+            <?= e($msg) ?>
+        </div>
     <?php endif; ?>
 
-    <a href="/" class="button">Zurück zur Startseite</a>
+    <?php if (!$redirectAfterSuccess): ?>
+    <form method="post" action="">
+        <div class="honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input
+                type="text"
+                id="website"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+            >
+        </div>
 
+        <label for="name">Ihr Name</label>
+        <input
+            id="name"
+            name="name"
+            type="text"
+            maxlength="120"
+            required
+            autocomplete="name"
+            value="<?= e($name) ?>"
+        >
+
+        <label for="email">E-Mail-Adresse</label>
+        <input
+            id="email"
+            name="email"
+            type="email"
+            maxlength="254"
+            required
+            autocomplete="email"
+            value="<?= e($email) ?>"
+        >
+
+        <label for="message">Ihre Nachricht</label>
+        <textarea
+            id="message"
+            name="message"
+            maxlength="10000"
+            required
+        ><?= e($message) ?></textarea>
+
+        <button type="submit">Nachricht senden</button>
+    </form>
+    <?php endif; ?>
+</main>
+
+<?php if ($redirectAfterSuccess): ?>
+<div class="popup-overlay">
+    <div class="success-popup" role="status">
+        <div class="success-icon">✓</div>
+
+        <h2>Nachricht gesendet!</h2>
+
+        <p><?= e($msg) ?></p>
+
+        <a class="redirect-button" href="/">
+            Jetzt zur Startseite
+        </a>
+
+        <p class="redirect-countdown">
+            Automatische Weiterleitung in
+            <span id="countdown">5</span> Sekunden ...
+        </p>
+    </div>
 </div>
+
+<script>
+(function () {
+    let seconds = 5;
+    const countdown = document.getElementById('countdown');
+
+    const timer = setInterval(function () {
+        seconds--;
+        countdown.textContent = seconds;
+
+        if (seconds <= 0) {
+            clearInterval(timer);
+            window.location.href = '/';
+        }
+    }, 1000);
+})();
+</script>
+<?php endif; ?>
+
 </body>
 </html>

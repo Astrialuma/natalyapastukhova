@@ -133,7 +133,7 @@
 
                 <a
                     class="btn"
-                    href="mailto:kontakt@natalyapastukhova.de"
+                    href="mailto:natalyap@gmx.de"
                 >
                     Persönliche Analyse anfragen
                 </a>
@@ -227,7 +227,7 @@
 
                 <a
                     class="btn"
-                    href="mailto:kontakt@natalyapastukhova.de"
+                    href="mailto:natalyap@gmx.de"
                 >
                     10 Stunden Begleitung anfragen
                 </a>
@@ -300,7 +300,7 @@
 
                 <a
                     class="btn"
-                    href="mailto:kontakt@natalyapastukhova.de"
+                    href="mailto:natalyap@gmx.de"
                 >
                     20 Stunden Begleitung anfragen
                 </a>
@@ -502,8 +502,8 @@
                     Nutzen Sie das Kontaktformular oder schreiben Sie direkt an:
                 </p>
 
-                <a href="mailto:kontakt@natalyapastukhova.de">
-                    kontakt@natalyapastukhova.de
+                <a href="mailto:natalyap@gmx.de">
+                    natalyap@gmx.de
                 </a>
 
                 <p>
@@ -590,7 +590,7 @@
 
         <a
             class="btn"
-            href="mailto:kontakt@natalyapastukhova.de"
+            href="mailto:natalyap@gmx.de"
         >
             Begleitung anfragen
         </a>
@@ -605,7 +605,7 @@
 
   <h2>Kontaktformular</h2>
 
-  <p>Kontaktieren Sie mich unter <a href="mailto:kontakt@natalyapastukhova.de">kontakt@natalyapastukhova.de</a> oder füllen Sie das folgende Formular aus</p><br>
+  <p>Kontaktieren Sie mich unter <a href="mailto:natalyap@gmx.de">natalyap@gmx.de</a> oder füllen Sie das folgende Formular aus</p><br>
 
 
     <form action="send.php" method="post" id="contact" class="kontakt-form">

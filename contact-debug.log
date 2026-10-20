@@ -28,3 +28,19 @@
 [2026-10-20 10:13:58] VERSANDFEHLER: PHPMailer\PHPMailer\Exception: Extension missing: openssl
 [2026-10-20 10:13:58] PHPMailer ErrorInfo: Extension missing: openssl
 [2026-10-20 10:13:58] Verarbeitung abgeschlossen
+[2026-10-20 10:14:41] ========================================
+[2026-10-20 10:14:41] Kontaktformular aufgerufen
+[2026-10-20 10:14:41] Request-Methode: POST
+[2026-10-20 10:14:41] PHP-Version: 8.2.9
+[2026-10-20 10:14:41] POST-Anfrage empfangen
+[2026-10-20 10:14:41] Name vorhanden: Ja
+[2026-10-20 10:14:41] E-Mail vorhanden: Ja
+[2026-10-20 10:14:41] Nachricht vorhanden: Ja
+[2026-10-20 10:14:41] Validierung erfolgreich
+[2026-10-20 10:14:41] PHPMailer wird konfiguriert
+[2026-10-20 10:14:41] SMTP-Konfiguration abgeschlossen
+[2026-10-20 10:14:41] Versuche SMTP-Verbindung und E-Mail-Versand
+[2026-10-20 10:14:41] SMTP DEBUG [2]: Extension missing: openssl
+[2026-10-20 10:14:41] VERSANDFEHLER: PHPMailer\PHPMailer\Exception: Extension missing: openssl
+[2026-10-20 10:14:41] PHPMailer ErrorInfo: Extension missing: openssl
+[2026-10-20 10:14:41] Verarbeitung abgeschlossen

@@ -800,7 +800,7 @@
 
   <h2>Kontaktformular</h2>
 
-  <p>Kontaktieren Sie mich unter <a href="mailto:kontakt@natalyapastukhova.de">kontakt@natalyapastukhova.de</a> oder füllen Sie das folgende Formular aus</p><br>
+  <p>Kontaktieren Sie mich unter <a href="mailto:natalyap@gmx.de">natalyap@gmx.de</a> oder füllen Sie das folgende Formular aus</p><br>
 
 
     <form action="send.php" method="post" id="contact" class="kontakt-form">
@@ -866,6 +866,15 @@
 
 </footer>
 
+
+<?php if (!empty($_SESSION['contact_success'])): ?>
+    <div class="contact-popup" id="contactPopup" role="status">
+        <span class="contact-popup-icon">✓</span>
+        <span><?= e($_SESSION['contact_success']) ?></span>
+    </div>
+
+    <?php unset($_SESSION['contact_success']); ?>
+<?php endif; ?>
 
 </body>
 </html>

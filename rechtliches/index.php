@@ -37,8 +37,8 @@
 
         <p>
             E-Mail:
-            <a href="mailto:kontakt@natalyapastukhova.de">
-                kontakt@natalyapastukhova.de
+            <a href="mailto:natalyap@gmx.de">
+                natalyap@gmx.de
             </a>
         </p>
 
@@ -103,8 +103,8 @@
 
         <p>
             E-Mail:
-            <a href="mailto:kontakt@natalyapastukhova.de">
-                kontakt@natalyapastukhova.de
+            <a href="mailto:natalyap@gmx.de">
+                natalyap@gmx.de
             </a>
         </p>
 
@@ -384,8 +384,8 @@
         </p>
 
         <p>
-            <a href="mailto:kontakt@natalyapastukhova.de">
-                kontakt@natalyapastukhova.de
+            <a href="mailto:natalyap@gmx.de">
+                natalyap@gmx.de
             </a>
         </p>
 
